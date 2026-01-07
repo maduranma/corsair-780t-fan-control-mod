@@ -1,4 +1,6 @@
 #include "BulkUSB.h"
+#include <avr/sleep.h>
+
 
 const int ledPins[3] = {5, 6, 3};
 const int buttonPin = 4;
@@ -12,6 +14,7 @@ void setup() {
 }
 
 int oldButton = 0;
+bool wasSuspended = false;
 void loop() {
   char buf[2];
   int n = BulkUSB.read(buf, sizeof(buf));
@@ -35,6 +38,20 @@ void loop() {
     delay(20);
   }
 
+  bool isSuspended = USBDevice.isSuspended();
+  if(isSuspended != wasSuspended) {
+    wasSuspended = isSuspended;
+    if(isSuspended) {
+      for(int led = 0; led < 3; led++) {
+        disableBlink(led);
+        analogWrite(ledPins[led], 255);
+      }
+    } else {
+      for(int led = 0; led < 3; led++) {
+        enableBlink(led);
+      }
+    }
+  }
   doBlinking();
   delay(1);
 }
