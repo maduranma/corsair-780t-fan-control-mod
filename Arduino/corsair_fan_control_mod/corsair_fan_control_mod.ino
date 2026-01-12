@@ -74,7 +74,7 @@ void disableBlink(int led) {
 void enableBlink(int led) {
   bool anyLedBlinking = false;
   for(int i = 0; i < 3; i++) {
-    anyLedBlinking = ledBlinking[i];
+    anyLedBlinking |= ledBlinking[i];
   }
   if (!anyLedBlinking) {
     blinkingBrightness = 0;
